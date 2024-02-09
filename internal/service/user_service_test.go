@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	mock_repository "demo/bank-linking-listener/internal/repository/mock"
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
@@ -25,15 +26,17 @@ func TestSignUp(t *testing.T) {
 			Password: "password",
 		}
 
+		ctx := context.Background()
+
 		mockUserRepo.EXPECT().
-			Create(gomock.Cond(func(x any) bool {
+			Create(ctx, gomock.Cond(func(x any) bool {
 				u := x.(entity.User)
 				return u.Email == user.Email &&
 					bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(user.Password)) == nil
 			})).
 			Return(nil, nil)
 
-		err := userService.SignUp(user)
+		err := userService.SignUp(ctx, user)
 		require.Nil(t, err)
 	})
 }
@@ -51,17 +54,19 @@ func TestSignIn(t *testing.T) {
 			Password: "password",
 		}
 
+		ctx := context.Background()
+
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		require.Nil(t, err)
 
 		mockUserRepo.EXPECT().
-			GetByEmail(user.Email).
+			GetByEmail(ctx, user.Email).
 			Return(&entity.User{
 				Email:    user.Email,
 				Password: string(hashedPassword),
 			}, nil)
 
-		token, rerr := userService.SignIn(user)
+		token, rerr := userService.SignIn(ctx, user)
 		require.Nil(t, rerr)
 		parsedEmail, err := utils.ParseToken(token)
 		require.Nil(t, err)

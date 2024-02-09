@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"demo/bank-linking-listener/internal/repository"
 	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/utils"
@@ -18,14 +19,14 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) SignUp(user entity.User) entity.Error {
+func (s *userService) SignUp(ctx context.Context, user entity.User) entity.Error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return entity.NewError(entity.ErrorInternal, "failed to hash password")
 	}
 	user.Password = string(hashedPassword)
 
-	_, rerr := s.userRepo.Create(user)
+	_, rerr := s.userRepo.Create(ctx, user)
 	if rerr != nil {
 		return rerr
 	}
@@ -33,8 +34,8 @@ func (s *userService) SignUp(user entity.User) entity.Error {
 	return nil
 }
 
-func (s *userService) SignIn(user entity.User) (string, entity.Error) {
-	res, rerr := s.userRepo.GetByEmail(user.Email)
+func (s *userService) SignIn(ctx context.Context, user entity.User) (string, entity.Error) {
+	res, rerr := s.userRepo.GetByEmail(ctx, user.Email)
 	if rerr != nil || bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(user.Password)) != nil {
 		return "", entity.NewError(entity.ErrorUnauthenticated, "invalid credentials")
 	}

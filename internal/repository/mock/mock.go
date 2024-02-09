@@ -10,6 +10,7 @@
 package mock_repository
 
 import (
+	context "context"
 	entity "demo/bank-linking-listener/internal/service/entity"
 	reflect "reflect"
 
@@ -40,31 +41,31 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserRepository) Create(user entity.User) (*entity.User, entity.Error) {
+func (m *MockUserRepository) Create(ctx context.Context, user entity.User) (*entity.User, entity.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", user)
+	ret := m.ctrl.Call(m, "Create", ctx, user)
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(entity.Error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserRepositoryMockRecorder) Create(user any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) Create(ctx, user any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, user)
 }
 
 // GetByEmail mocks base method.
-func (m *MockUserRepository) GetByEmail(email string) (*entity.User, entity.Error) {
+func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*entity.User, entity.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByEmail", email)
+	ret := m.ctrl.Call(m, "GetByEmail", ctx, email)
 	ret0, _ := ret[0].(*entity.User)
 	ret1, _ := ret[1].(entity.Error)
 	return ret0, ret1
 }
 
 // GetByEmail indicates an expected call of GetByEmail.
-func (mr *MockUserRepositoryMockRecorder) GetByEmail(email any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) GetByEmail(ctx, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), ctx, email)
 }

@@ -1,8 +1,11 @@
 package service
 
-import "demo/bank-linking-listener/internal/service/entity"
+import (
+	"context"
+	"demo/bank-linking-listener/internal/service/entity"
+)
 
 type UserService interface {
-	SignUp(user entity.User) entity.Error
-	SignIn(user entity.User) (string, entity.Error)
+	SignUp(ctx context.Context, user entity.User) entity.Error
+	SignIn(ctx context.Context, user entity.User) (string, entity.Error)
 }
