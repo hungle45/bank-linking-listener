@@ -4,7 +4,7 @@ import (
 	"demo/bank-linking-listener/config"
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
 	"demo/bank-linking-listener/internal/delivery/http/route"
-	"demo/bank-linking-listener/internal/repository/tidb"
+	"demo/bank-linking-listener/internal/repository/tidb_repo"
 	"demo/bank-linking-listener/internal/service"
 	"fmt"
 	"log"
@@ -20,7 +20,7 @@ func main() {
 	fmt.Println(cfg)
 
 	// setup repository
-	userRepository := tidb.NewUserRepository()
+	userRepository := tidb_repo.NewUserRepository()
 
 	// setup service
 	userService := service.NewUserService(userRepository)

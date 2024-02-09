@@ -1,9 +1,9 @@
-package tidb
+package tidb_repo
 
 import (
 	"context"
 	"demo/bank-linking-listener/internal/repository"
-	"demo/bank-linking-listener/internal/repository/tidb/tidb_dto"
+	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service/entity"
 )
 

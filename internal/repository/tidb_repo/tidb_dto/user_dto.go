@@ -11,6 +11,7 @@ type UserModel struct {
 	Email    string      `gorm:"type:varchar(100);uniqueIndex"`
 	Password string      `gorm:"type:varchar(100)"`
 	Role     entity.Role `gorm:"type:varchar(100);default:'user'"`
+	Banks    []BankModel `gorm:"many2many:user_banks;"`
 }
 
 func NewUserModel(user *entity.User) *UserModel {
