@@ -10,7 +10,7 @@ type UserModel struct {
 	gorm.Model
 	Email    string      `gorm:"type:varchar(100);uniqueIndex"`
 	Password string      `gorm:"type:varchar(100)"`
-	Role     entity.Role `gorm:"type:varchar(100)"`
+	Role     entity.Role `gorm:"type:varchar(100);default:'user'"`
 }
 
 func NewUserModel(user *entity.User) *UserModel {
@@ -22,7 +22,7 @@ func NewUserModel(user *entity.User) *UserModel {
 	}
 }
 
-func (u *UserModel) ToUser() *entity.User {
+func (u *UserModel) ToEntity() *entity.User {
 	return &entity.User{
 		ID:       u.ID,
 		Email:    u.Email,

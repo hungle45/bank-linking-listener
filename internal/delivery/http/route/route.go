@@ -31,6 +31,8 @@ func (c *routerConfig) setupUserRoute() {
 	// guest route
 	{
 		userRouteGroup.GET("/health", c.userHandler.CheckHealth)
+		userRouteGroup.POST("/signup", c.userHandler.SignUp)
+		userRouteGroup.POST("/signin", c.userHandler.SignIn)
 	}
 }
 
