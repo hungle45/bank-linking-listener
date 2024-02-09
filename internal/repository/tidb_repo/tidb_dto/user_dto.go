@@ -23,6 +23,10 @@ func NewUserModel(user *entity.User) *UserModel {
 	}
 }
 
+func (u *UserModel) TableName() string {
+	return "users"
+}
+
 func (u *UserModel) ToEntity() *entity.User {
 	return &entity.User{
 		ID:       u.ID,

@@ -19,6 +19,10 @@ func NewBankModel(bank *entity.Bank) *BankModel {
 	}
 }
 
+func (b *BankModel) TableName() string {
+	return "banks"
+}
+
 func (b *BankModel) ToEntity() *entity.Bank {
 	return &entity.Bank{
 		Code: b.Code,

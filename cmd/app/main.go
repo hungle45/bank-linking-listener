@@ -5,7 +5,9 @@ import (
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
 	"demo/bank-linking-listener/internal/delivery/http/route"
 	"demo/bank-linking-listener/internal/repository/tidb_repo"
+	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service"
+	"demo/bank-linking-listener/pkg/tidb"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,8 +21,19 @@ func main() {
 	cfg := config.LoadConfig("./config.yml")
 	fmt.Println(cfg)
 
+	db := tidb.NewDB(&cfg)
+	conn := db.GetConn()
+
+	if err := conn.AutoMigrate(&tidb_dto.UserModel{}); err != nil {
+		log.Fatalf("Failed to migrate user model: %s", err)
+	}
+
+	if err := conn.AutoMigrate(&tidb_dto.BankModel{}); err != nil {
+		log.Fatalf("Failed to migrate bank model: %s", err)
+	}
+
 	// setup repository
-	userRepository := tidb_repo.NewUserRepository()
+	userRepository := tidb_repo.NewUserRepository(conn)
 
 	// setup service
 	userService := service.NewUserService(userRepository)

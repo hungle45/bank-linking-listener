@@ -9,12 +9,22 @@ import (
 )
 
 type Config struct {
-	Server serverConfig `yml:"app"`
+	Server   serverConfig   `yml:"server"`
+	Database databaseConfig `yml:"database"`
 }
 
 type serverConfig struct {
 	Host string `yml:"host"`
 	Port int    `yml:"port"`
+}
+
+type databaseConfig struct {
+	Host     string `yml:"host"`
+	Port     int    `yml:"port"`
+	User     string `yml:"user"`
+	Password string `yml:"password"`
+	Timezone string `yml:"timezone"`
+	DBName   string `yml:"dbname"`
 }
 
 func LoadConfig(configFilePath string) Config {
