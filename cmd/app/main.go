@@ -27,6 +27,7 @@ func main() {
 	db := tidb.NewDB(&cfg.Database)
 	conn := db.GetConn()
 
+	// migrate models
 	if err := conn.AutoMigrate(&tidb_dto.UserModel{}); err != nil {
 		log.Fatalf("Failed to migrate user model: %s", err)
 	}
@@ -37,13 +38,15 @@ func main() {
 
 	// setup repository
 	userRepository := tidb_repo.NewUserRepository(conn)
+	bankRepository := tidb_repo.NewBankRepository(conn)
 
 	// setup service
 	userService := service.NewUserService(userRepository)
+	bankService := service.NewBankService(bankRepository)
 
 	// setup handler
 	userHandler := httpHandler.NewUserHandler(userService)
-	bankHandler := httpHandler.NewBankHandler()
+	bankHandler := httpHandler.NewBankHandler(bankService)
 
 	// setup middleware
 	authMiddleware := middleware.JWTMiddleware()
