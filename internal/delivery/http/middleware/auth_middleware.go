@@ -16,7 +16,7 @@ func JWTMiddleware() gin.HandlerFunc {
 		header := c.GetHeader("Authorization")
 		if header == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
-				utils.ResponseWithMessage(utils.ResponseStatusFail, "bad header value given"))
+				utils.ResponseWithMessage(utils.ResponseStatusFail, "invalid token"))
 		}
 
 		token := strings.Split(header, " ")
@@ -25,13 +25,13 @@ func JWTMiddleware() gin.HandlerFunc {
 				utils.ResponseWithMessage(utils.ResponseStatusFail, "invalid formatted authorization header"))
 		}
 
-		userEmail, err := utils.ParseToken(token[1])
+		userID, err := utils.ParseToken(token[1])
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 				utils.ResponseWithMessage(utils.ResponseStatusFail, "invalid token"))
 		}
 
-		c.Set("userEmail", userEmail)
+		c.Set("userID", userID)
 		c.Next()
 	}
 }
@@ -39,8 +39,8 @@ func JWTMiddleware() gin.HandlerFunc {
 func RoleMiddleware(userService service.UserService) func(...entity.Role) gin.HandlerFunc {
 	return func(acceptedRole ...entity.Role) gin.HandlerFunc {
 		return func(c *gin.Context) {
-			userEmail := c.MustGet("userEmail").(string)
-			user, rerr := userService.GetByEmail(c, userEmail)
+			userID := c.MustGet("userID").(uint)
+			user, rerr := userService.GetByID(c, userID)
 			if rerr != nil {
 				c.AbortWithStatusJSON(utils.GetStatusCode(rerr),
 					utils.ResponseWithMessage(utils.ResponseStatusFail, rerr.Message()))

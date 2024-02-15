@@ -58,7 +58,7 @@ func (s *userService) SignIn(ctx context.Context, user entity.User) (string, ent
 		return "", entity.NewError(entity.ErrorUnauthenticated, "invalid credentials")
 	}
 
-	token, err := utils.GenerateToken(res.Email)
+	token, err := utils.GenerateToken(res.ID)
 	if err != nil {
 		return "", entity.NewError(entity.ErrorInternal, "failed to generate token")
 	}
@@ -68,6 +68,15 @@ func (s *userService) SignIn(ctx context.Context, user entity.User) (string, ent
 
 func (s *userService) GetByEmail(ctx context.Context, email string) (entity.User, entity.Error) {
 	res, rerr := s.userRepo.GetByEmail(ctx, email)
+	if rerr != nil {
+		return entity.User{}, rerr
+	}
+
+	return *res, nil
+}
+
+func (s *userService) GetByID(ctx context.Context, id uint) (entity.User, entity.Error) {
+	res, rerr := s.userRepo.GetByID(ctx, id)
 	if rerr != nil {
 		return entity.User{}, rerr
 	}

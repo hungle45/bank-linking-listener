@@ -6,6 +6,7 @@ import (
 )
 
 type UserRepository interface {
+	GetByID(ctx context.Context, userID uint) (*entity.User, entity.Error)
 	GetByEmail(ctx context.Context, email string) (*entity.User, entity.Error)
 	Create(ctx context.Context, user entity.User) (*entity.User, entity.Error)
 }

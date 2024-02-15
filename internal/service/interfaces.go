@@ -7,6 +7,7 @@ import (
 
 type UserService interface {
 	SignIn(ctx context.Context, user entity.User) (string, entity.Error)
+	GetByID(ctx context.Context, id uint) (entity.User, entity.Error)
 	GetByEmail(ctx context.Context, email string) (entity.User, entity.Error)
 	CreateUserAccount(ctx context.Context, user entity.User) entity.Error
 	CreateAdminAccount(ctx context.Context, user entity.User) entity.Error
