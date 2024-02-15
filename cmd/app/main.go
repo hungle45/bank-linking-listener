@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"demo/bank-linking-listener/config"
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
+	"demo/bank-linking-listener/internal/delivery/http/middleware"
 	"demo/bank-linking-listener/internal/delivery/http/route"
 	"demo/bank-linking-listener/internal/repository/tidb_repo"
 	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service"
+	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/tidb"
 	"fmt"
 	"log"
@@ -21,7 +24,7 @@ func main() {
 	cfg := config.LoadConfig("./config.yml")
 	fmt.Println(cfg)
 
-	db := tidb.NewDB(&cfg)
+	db := tidb.NewDB(&cfg.Database)
 	conn := db.GetConn()
 
 	if err := conn.AutoMigrate(&tidb_dto.UserModel{}); err != nil {
@@ -42,10 +45,31 @@ func main() {
 	userHandler := httpHandler.NewUserHandler(userService)
 	bankHandler := httpHandler.NewBankHandler()
 
+	// setup middleware
+	authMiddleware := middleware.JWTMiddleware()
+	roleMiddleware := middleware.RoleMiddleware(userService)
+
+	// init admin
+	admin := entity.User{
+		Email:    cfg.Server.Admin.Email,
+		Password: cfg.Server.Admin.Password,
+		Role:     entity.AdminRole,
+	}
+	if err := userService.CreateAdminAccount(context.Background(), admin); err != nil {
+		log.Fatalf("Failed to create admin account: %s", err)
+	}
+
+	// setup router
 	r := gin.Default()
 
 	v1 := r.Group("/v1")
-	routerConfig := route.NewRouterConfig(v1, userHandler, bankHandler)
+	routerConfig := route.RouterConfig{
+		Router:         v1,
+		UserHandler:    userHandler,
+		BankHandler:    bankHandler,
+		JWTMiddleware:  authMiddleware,
+		RoleMiddleware: roleMiddleware,
+	}
 	routerConfig.Setup()
 
 	s := &http.Server{

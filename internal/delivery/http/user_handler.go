@@ -3,7 +3,6 @@ package http
 import (
 	"demo/bank-linking-listener/internal/delivery/http/http_dto"
 	"demo/bank-linking-listener/internal/service"
-	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/utils"
 	"net/http"
 
@@ -34,8 +33,7 @@ func (h *UserHandler) CreateUserAccount(c *gin.Context) {
 		return
 	}
 
-	account := req.ToEntity()
-	if rerr := h.userService.CreateAccount(c.Request.Context(), *account); rerr != nil {
+	if rerr := h.userService.CreateUserAccount(c.Request.Context(), *req.ToEntity()); rerr != nil {
 		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, rerr.Message()))
 		return
@@ -53,9 +51,7 @@ func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
 		return
 	}
 
-	account := req.ToEntity()
-	account.Role = entity.CustomerRole
-	if rerr := h.userService.CreateAccount(c.Request.Context(), *account); rerr != nil {
+	if rerr := h.userService.CreateCustomerAccount(c.Request.Context(), *req.ToEntity()); rerr != nil {
 		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, rerr.Message()))
 		return

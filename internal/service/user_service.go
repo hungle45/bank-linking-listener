@@ -19,7 +19,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) CreateAccount(ctx context.Context, user entity.User) entity.Error {
+func (s *userService) createAccount(ctx context.Context, user entity.User) entity.Error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return entity.NewError(entity.ErrorInternal, "failed to hash password")
@@ -28,6 +28,24 @@ func (s *userService) CreateAccount(ctx context.Context, user entity.User) entit
 
 	_, rerr := s.userRepo.Create(ctx, user)
 	if rerr != nil {
+		return rerr
+	}
+
+	return nil
+}
+
+func (s *userService) CreateUserAccount(ctx context.Context, user entity.User) entity.Error {
+	user.Role = entity.UserRole
+	return s.createAccount(ctx, user)
+}
+func (s *userService) CreateCustomerAccount(ctx context.Context, user entity.User) entity.Error {
+	user.Role = entity.CustomerRole
+	return s.createAccount(ctx, user)
+}
+
+func (s *userService) CreateAdminAccount(ctx context.Context, admin entity.User) entity.Error {
+	rerr := s.createAccount(ctx, admin)
+	if rerr != nil && rerr.ErrorType() != entity.ErrorAlreadyExists {
 		return rerr
 	}
 
@@ -46,4 +64,13 @@ func (s *userService) SignIn(ctx context.Context, user entity.User) (string, ent
 	}
 
 	return token, nil
+}
+
+func (s *userService) GetByEmail(ctx context.Context, email string) (entity.User, entity.Error) {
+	res, rerr := s.userRepo.GetByEmail(ctx, email)
+	if rerr != nil {
+		return entity.User{}, rerr
+	}
+
+	return *res, nil
 }

@@ -9,16 +9,22 @@ import (
 )
 
 type Config struct {
-	Server   serverConfig   `yml:"server"`
-	Database databaseConfig `yml:"database"`
+	Server   ServerConfig   `yml:"server"`
+	Database DatabaseConfig `yml:"database"`
 }
 
-type serverConfig struct {
-	Host string `yml:"host"`
-	Port int    `yml:"port"`
+type ServerConfig struct {
+	Host  string      `yml:"host"`
+	Port  int         `yml:"port"`
+	Admin AdminConfig `yml:"admin"`
 }
 
-type databaseConfig struct {
+type AdminConfig struct {
+	Email    string `yml:"email"`
+	Password string `yml:"password"`
+}
+
+type DatabaseConfig struct {
 	Host     string `yml:"host"`
 	Port     int    `yml:"port"`
 	User     string `yml:"user"`
