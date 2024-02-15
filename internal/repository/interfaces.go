@@ -14,4 +14,5 @@ type UserRepository interface {
 type BankRepository interface {
 	Create(ctx context.Context, bank entity.Bank) (entity.Bank, entity.Error)
 	LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error
+	FetchByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error)
 }

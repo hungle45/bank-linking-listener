@@ -32,6 +32,11 @@ func (c *RouterConfig) setupGuestRoute() {
 		c.Router.POST("users/signup", c.UserHandler.CreateUserAccount)
 		c.Router.POST("users/signin", c.UserHandler.SignIn)
 	}
+
+	// bank route
+	// {
+	// 	c.Router.POST("users/:userID/banks/:bankCode/linking", c.BankHandler.LinkBank)
+	// }
 }
 
 func (c *RouterConfig) setupAuthRoute() {

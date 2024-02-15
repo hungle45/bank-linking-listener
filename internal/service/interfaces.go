@@ -15,7 +15,7 @@ type UserService interface {
 }
 
 type BankService interface {
-	// GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error)
+	GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error)
 	LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error
 	CreateBank(ctx context.Context, bank entity.Bank) (entity.Bank, entity.Error)
 }

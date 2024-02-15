@@ -69,3 +69,85 @@ func (mr *MockUserRepositoryMockRecorder) GetByEmail(ctx, email any) *gomock.Cal
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), ctx, email)
 }
+
+// GetByID mocks base method.
+func (m *MockUserRepository) GetByID(ctx context.Context, userID uint) (*entity.User, entity.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", ctx, userID)
+	ret0, _ := ret[0].(*entity.User)
+	ret1, _ := ret[1].(entity.Error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockUserRepositoryMockRecorder) GetByID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUserRepository)(nil).GetByID), ctx, userID)
+}
+
+// MockBankRepository is a mock of BankRepository interface.
+type MockBankRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockBankRepositoryMockRecorder
+}
+
+// MockBankRepositoryMockRecorder is the mock recorder for MockBankRepository.
+type MockBankRepositoryMockRecorder struct {
+	mock *MockBankRepository
+}
+
+// NewMockBankRepository creates a new mock instance.
+func NewMockBankRepository(ctrl *gomock.Controller) *MockBankRepository {
+	mock := &MockBankRepository{ctrl: ctrl}
+	mock.recorder = &MockBankRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockBankRepository) EXPECT() *MockBankRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockBankRepository) Create(ctx context.Context, bank entity.Bank) (entity.Bank, entity.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, bank)
+	ret0, _ := ret[0].(entity.Bank)
+	ret1, _ := ret[1].(entity.Error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockBankRepositoryMockRecorder) Create(ctx, bank any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockBankRepository)(nil).Create), ctx, bank)
+}
+
+// FetchByUserID mocks base method.
+func (m *MockBankRepository) FetchByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchByUserID", ctx, userID)
+	ret0, _ := ret[0].([]entity.Bank)
+	ret1, _ := ret[1].(entity.Error)
+	return ret0, ret1
+}
+
+// FetchByUserID indicates an expected call of FetchByUserID.
+func (mr *MockBankRepositoryMockRecorder) FetchByUserID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchByUserID", reflect.TypeOf((*MockBankRepository)(nil).FetchByUserID), ctx, userID)
+}
+
+// LinkBank mocks base method.
+func (m *MockBankRepository) LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LinkBank", ctx, userID, bankCode)
+	ret0, _ := ret[0].(entity.Error)
+	return ret0
+}
+
+// LinkBank indicates an expected call of LinkBank.
+func (mr *MockBankRepositoryMockRecorder) LinkBank(ctx, userID, bankCode any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LinkBank", reflect.TypeOf((*MockBankRepository)(nil).LinkBank), ctx, userID, bankCode)
+}

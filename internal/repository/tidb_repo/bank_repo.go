@@ -75,3 +75,20 @@ func (r *bankRepository) Create(ctx context.Context, bank entity.Bank) (entity.B
 
 	return *bankModel.ToEntity(), nil
 }
+
+func (r *bankRepository) FetchByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
+	var userModel tidb_dto.UserModel
+	if err := r.db.Preload("Banks").First(&userModel, userID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return []entity.Bank{}, nil
+		}
+		return []entity.Bank{}, entity.NewError(entity.ErrorInternal, err.Error())
+	}
+
+	var banks []entity.Bank
+	for _, bankModel := range userModel.Banks {
+		banks = append(banks, *bankModel.ToEntity())
+	}
+
+	return banks, nil
+}

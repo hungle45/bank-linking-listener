@@ -16,9 +16,9 @@ func NewBankService(bankRepo repository.BankRepository) BankService {
 	}
 }
 
-// func (s *bankService) GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
-// 	return []entity.Bank{}, nil
-// }
+func (s *bankService) GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
+	return s.bankRepo.FetchByUserID(ctx, userID)
+}
 
 func (s *bankService) LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error {
 	return s.bankRepo.LinkBank(ctx, userID, bankCode)
