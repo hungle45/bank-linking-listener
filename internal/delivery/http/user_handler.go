@@ -3,6 +3,7 @@ package http
 import (
 	"demo/bank-linking-listener/internal/delivery/http/http_dto"
 	"demo/bank-linking-listener/internal/service"
+	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/utils"
 	"net/http"
 
@@ -25,7 +26,7 @@ func (h *UserHandler) CheckHealth(c *gin.Context) {
 	})
 }
 
-func (h *UserHandler) SignUp(c *gin.Context) {
+func (h *UserHandler) CreateUserAccount(c *gin.Context) {
 	var req http_dto.UserSignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, utils.ResponseWithMessage(
@@ -33,7 +34,28 @@ func (h *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	if rerr := h.userService.SignUp(c.Request.Context(), *req.ToEntity()); rerr != nil {
+	account := req.ToEntity()
+	if rerr := h.userService.CreateAccount(c.Request.Context(), *account); rerr != nil {
+		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
+			utils.ResponseStatusFail, rerr.Message()))
+		return
+	}
+
+	c.JSON(http.StatusOK, utils.ResponseWithMessage(
+		utils.ResponseStatusSuccess, "account has been created"))
+}
+
+func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
+	var req http_dto.UserSignUpRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, utils.ResponseWithMessage(
+			utils.ResponseStatusFail, err.Error()))
+		return
+	}
+
+	account := req.ToEntity()
+	account.Role = entity.CustomerRole
+	if rerr := h.userService.CreateAccount(c.Request.Context(), *account); rerr != nil {
 		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, rerr.Message()))
 		return

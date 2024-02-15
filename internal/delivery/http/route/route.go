@@ -21,26 +21,34 @@ func NewRouterConfig(router *gin.RouterGroup, userHandler *http.UserHandler, ban
 }
 
 func (c *routerConfig) Setup() {
-	c.setupUserRoute()
-	c.setupBankRoute()
+	c.setupGuestRoute()
+	c.setupAuthRoute()
 }
 
-func (c *routerConfig) setupUserRoute() {
-	userRouteGroup := c.router.Group("/user")
-
-	// guest route
+func (c *routerConfig) setupGuestRoute() {
+	// check health
 	{
-		userRouteGroup.GET("/health", c.userHandler.CheckHealth)
-		userRouteGroup.POST("/signup", c.userHandler.SignUp)
-		userRouteGroup.POST("/signin", c.userHandler.SignIn)
+		c.router.GET("users/health", c.userHandler.CheckHealth)
+		c.router.GET("banks/health", c.userHandler.CheckHealth)
+	}
+
+	// user route
+	{
+		c.router.POST("users/signup", c.userHandler.CreateUserAccount)
+		c.router.POST("users/signin", c.userHandler.SignIn)
 	}
 }
 
-func (c *routerConfig) setupBankRoute() {
-	bankRouteGroup := c.router.Group("/bank")
-
-	// guest route
+func (c *routerConfig) setupAuthRoute() {
+	// user route
 	{
-		bankRouteGroup.GET("/health", c.bankHandler.CheckHealth)
+		c.router.POST("admin/customer-account", c.userHandler.CreateCustomerAccount) // admin
+	}
+	
+	// bank route
+	{
+		c.router.GET("users/me/banks", c.bankHandler.GetBankListCurrentUser) // user
+		c.router.GET("users/:userID/banks", c.bankHandler.GetBankListByUserID) // system admin
+		// c.router.POST("admin/banks", c.bankHandler.CreateBank) // admin
 	}
 }

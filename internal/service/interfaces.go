@@ -6,6 +6,6 @@ import (
 )
 
 type UserService interface {
-	SignUp(ctx context.Context, user entity.User) entity.Error
+	CreateAccount(ctx context.Context, user entity.User) entity.Error
 	SignIn(ctx context.Context, user entity.User) (string, entity.Error)
 }

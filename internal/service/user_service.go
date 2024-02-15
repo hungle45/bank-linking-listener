@@ -19,7 +19,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) SignUp(ctx context.Context, user entity.User) entity.Error {
+func (s *userService) CreateAccount(ctx context.Context, user entity.User) entity.Error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return entity.NewError(entity.ErrorInternal, "failed to hash password")

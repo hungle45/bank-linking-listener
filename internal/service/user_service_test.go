@@ -24,6 +24,7 @@ func TestSignUp(t *testing.T) {
 		user := entity.User{
 			Email:    "user@gmail.com",
 			Password: "password",
+			Role:	 entity.CustomerRole,
 		}
 
 		ctx := context.Background()
@@ -31,12 +32,12 @@ func TestSignUp(t *testing.T) {
 		mockUserRepo.EXPECT().
 			Create(ctx, gomock.Cond(func(x any) bool {
 				u := x.(entity.User)
-				return u.Email == user.Email &&
+				return u.Email == user.Email && u.Role == user.Role &&
 					bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(user.Password)) == nil
 			})).
 			Return(nil, nil)
 
-		err := userService.SignUp(ctx, user)
+		err := userService.CreateAccount(ctx, user)
 		require.Nil(t, err)
 	})
 }
