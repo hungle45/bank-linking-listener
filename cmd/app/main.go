@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"demo/bank-linking-listener/config"
+	"demo/bank-linking-listener/internal/delivery/consumer"
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
 	"demo/bank-linking-listener/internal/delivery/http/middleware"
 	"demo/bank-linking-listener/internal/delivery/http/route"
@@ -10,6 +11,7 @@ import (
 	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
+	"demo/bank-linking-listener/pkg/kafka"
 	"demo/bank-linking-listener/pkg/tidb"
 	"fmt"
 	"log"
@@ -52,6 +54,21 @@ func main() {
 	authMiddleware := middleware.JWTMiddleware()
 	roleMiddleware := middleware.RoleMiddleware(userService)
 
+	// setup kafka consumer
+	kafkaClient := kafka.NewClient(cfg.Kafka.Brokers)
+	
+	bankLinkingConsumer := consumer.NewBankLinkingConsumer(bankService)
+	bankLinkingConsumer.TopicHandlers = map[string]kafka.ConsumerHandlerFn {
+		"bank-linking-log": bankLinkingConsumer.HandleBankLinking,
+	}
+	
+	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, bankLinkingConsumer)
+	if err != nil {
+		log.Fatalf("Failed to create consumer: %s", err)
+	}
+	go consumer.Start()
+	defer consumer.Stop()
+
 	// init admin
 	admin := entity.User{
 		Email:    cfg.Server.Admin.Email,
@@ -84,7 +101,7 @@ func main() {
 	}
 
 	log.Printf("Server running at %v:%v", cfg.Server.Host, cfg.Server.Port)
-	err := s.ListenAndServe()
+	err = s.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Server   ServerConfig   `yml:"server"`
 	Database DatabaseConfig `yml:"database"`
+	Kafka    KafkaConfig    `yml:"kafka"`
 }
 
 type ServerConfig struct {
@@ -31,6 +32,10 @@ type DatabaseConfig struct {
 	Password string `yml:"password"`
 	Timezone string `yml:"timezone"`
 	DBName   string `yml:"dbname"`
+}
+
+type KafkaConfig struct {
+	Brokers []string `yml:"brokers"`
 }
 
 func LoadConfig(configFilePath string) Config {
