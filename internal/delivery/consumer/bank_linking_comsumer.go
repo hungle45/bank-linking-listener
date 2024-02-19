@@ -28,9 +28,9 @@ func (c *bankLinkingConsumer) HandleBankLinking(ctx context.Context, message *sa
 		return errors.New("failed to unmarshal message")
 	}
 
-	rerr := c.bankService.LinkBank(ctx, req.UserID, req.BankCode)
-	if rerr != nil {
-		return errors.New(rerr.Message())
+	err = c.bankService.LinkBank(ctx, req.UserID, req.BankCode)
+	if err != nil {
+		return errors.New(err.Error())
 	}
 
 	log.Printf("Bank %s linked for user %v", req.BankCode, req.UserID)

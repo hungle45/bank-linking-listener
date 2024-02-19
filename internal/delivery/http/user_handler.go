@@ -3,6 +3,7 @@ package http
 import (
 	"demo/bank-linking-listener/internal/delivery/http/http_dto"
 	"demo/bank-linking-listener/internal/service"
+	"demo/bank-linking-listener/pkg/errorx"
 	"demo/bank-linking-listener/pkg/utils"
 	"net/http"
 
@@ -33,9 +34,9 @@ func (h *UserHandler) CreateUserAccount(c *gin.Context) {
 		return
 	}
 
-	if rerr := h.userService.CreateUserAccount(c.Request.Context(), *req.ToEntity()); rerr != nil {
-		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
-			utils.ResponseStatusFail, rerr.Message()))
+	if err := h.userService.CreateUserAccount(c.Request.Context(), *req.ToEntity()); err != nil {
+		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
+			utils.ResponseStatusFail, err.Error()))
 		return
 	}
 
@@ -51,9 +52,9 @@ func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
 		return
 	}
 
-	if rerr := h.userService.CreateCustomerAccount(c.Request.Context(), *req.ToEntity()); rerr != nil {
-		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
-			utils.ResponseStatusFail, rerr.Message()))
+	if err := h.userService.CreateCustomerAccount(c.Request.Context(), *req.ToEntity()); err != nil {
+		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
+			utils.ResponseStatusFail, err.Error()))
 		return
 	}
 
@@ -69,10 +70,10 @@ func (h *UserHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, rerr := h.userService.SignIn(c.Request.Context(), *req.ToEntity())
-	if rerr != nil {
-		c.JSON(utils.GetStatusCode(rerr), utils.ResponseWithMessage(
-			utils.ResponseStatusFail, rerr.Message()))
+	token, err := h.userService.SignIn(c.Request.Context(), *req.ToEntity())
+	if err != nil {
+		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
+			utils.ResponseStatusFail, err.Error()))
 		return
 	}
 

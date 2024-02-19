@@ -41,11 +41,11 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserRepository) Create(ctx context.Context, user entity.User) (*entity.User, entity.Error) {
+func (m *MockUserRepository) Create(ctx context.Context, user entity.User) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, user)
 	ret0, _ := ret[0].(*entity.User)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -56,11 +56,11 @@ func (mr *MockUserRepositoryMockRecorder) Create(ctx, user any) *gomock.Call {
 }
 
 // GetByEmail mocks base method.
-func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*entity.User, entity.Error) {
+func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByEmail", ctx, email)
 	ret0, _ := ret[0].(*entity.User)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -71,11 +71,11 @@ func (mr *MockUserRepositoryMockRecorder) GetByEmail(ctx, email any) *gomock.Cal
 }
 
 // GetByID mocks base method.
-func (m *MockUserRepository) GetByID(ctx context.Context, userID uint) (*entity.User, entity.Error) {
+func (m *MockUserRepository) GetByID(ctx context.Context, userID uint) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, userID)
 	ret0, _ := ret[0].(*entity.User)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -109,11 +109,11 @@ func (m *MockBankRepository) EXPECT() *MockBankRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockBankRepository) Create(ctx context.Context, bank entity.Bank) (entity.Bank, entity.Error) {
+func (m *MockBankRepository) Create(ctx context.Context, bank entity.Bank) (entity.Bank, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, bank)
 	ret0, _ := ret[0].(entity.Bank)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -124,11 +124,11 @@ func (mr *MockBankRepositoryMockRecorder) Create(ctx, bank any) *gomock.Call {
 }
 
 // FetchByUserID mocks base method.
-func (m *MockBankRepository) FetchByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
+func (m *MockBankRepository) FetchByUserID(ctx context.Context, userID uint) ([]entity.Bank, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FetchByUserID", ctx, userID)
 	ret0, _ := ret[0].([]entity.Bank)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -139,10 +139,10 @@ func (mr *MockBankRepositoryMockRecorder) FetchByUserID(ctx, userID any) *gomock
 }
 
 // LinkBank mocks base method.
-func (m *MockBankRepository) LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error {
+func (m *MockBankRepository) LinkBank(ctx context.Context, userID uint, bankCode string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LinkBank", ctx, userID, bankCode)
-	ret0, _ := ret[0].(entity.Error)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 

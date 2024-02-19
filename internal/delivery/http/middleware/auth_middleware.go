@@ -3,6 +3,7 @@ package middleware
 import (
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
+	"demo/bank-linking-listener/pkg/errorx"
 	"demo/bank-linking-listener/pkg/utils"
 	"fmt"
 	"net/http"
@@ -43,10 +44,10 @@ func RoleMiddleware(userService service.UserService) func(...entity.Role) gin.Ha
 	return func(acceptedRole ...entity.Role) gin.HandlerFunc {
 		return func(c *gin.Context) {
 			userID := c.MustGet("userID").(uint)
-			user, rerr := userService.GetByID(c, userID)
-			if rerr != nil {
-				c.AbortWithStatusJSON(utils.GetStatusCode(rerr),
-					utils.ResponseWithMessage(utils.ResponseStatusFail, rerr.Message()))
+			user, err := userService.GetByID(c, userID)
+			if err != nil {
+				c.AbortWithStatusJSON(errorx.GetHTTPCode(err),
+					utils.ResponseWithMessage(utils.ResponseStatusFail, err.Error()))
 				return
 			}
 			fmt.Println(acceptedRole, user.Role)

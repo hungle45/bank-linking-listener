@@ -41,10 +41,10 @@ func (m *MockUserService) EXPECT() *MockUserServiceMockRecorder {
 }
 
 // CreateAdminAccount mocks base method.
-func (m *MockUserService) CreateAdminAccount(ctx context.Context, user entity.User) entity.Error {
+func (m *MockUserService) CreateAdminAccount(ctx context.Context, user entity.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateAdminAccount", ctx, user)
-	ret0, _ := ret[0].(entity.Error)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
@@ -55,10 +55,10 @@ func (mr *MockUserServiceMockRecorder) CreateAdminAccount(ctx, user any) *gomock
 }
 
 // CreateCustomerAccount mocks base method.
-func (m *MockUserService) CreateCustomerAccount(ctx context.Context, user entity.User) entity.Error {
+func (m *MockUserService) CreateCustomerAccount(ctx context.Context, user entity.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCustomerAccount", ctx, user)
-	ret0, _ := ret[0].(entity.Error)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
@@ -69,10 +69,10 @@ func (mr *MockUserServiceMockRecorder) CreateCustomerAccount(ctx, user any) *gom
 }
 
 // CreateUserAccount mocks base method.
-func (m *MockUserService) CreateUserAccount(ctx context.Context, user entity.User) entity.Error {
+func (m *MockUserService) CreateUserAccount(ctx context.Context, user entity.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUserAccount", ctx, user)
-	ret0, _ := ret[0].(entity.Error)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
@@ -83,11 +83,11 @@ func (mr *MockUserServiceMockRecorder) CreateUserAccount(ctx, user any) *gomock.
 }
 
 // GetByEmail mocks base method.
-func (m *MockUserService) GetByEmail(ctx context.Context, email string) (entity.User, entity.Error) {
+func (m *MockUserService) GetByEmail(ctx context.Context, email string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByEmail", ctx, email)
 	ret0, _ := ret[0].(entity.User)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -98,11 +98,11 @@ func (mr *MockUserServiceMockRecorder) GetByEmail(ctx, email any) *gomock.Call {
 }
 
 // GetByID mocks base method.
-func (m *MockUserService) GetByID(ctx context.Context, id uint) (entity.User, entity.Error) {
+func (m *MockUserService) GetByID(ctx context.Context, id uint) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
 	ret0, _ := ret[0].(entity.User)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -113,11 +113,11 @@ func (mr *MockUserServiceMockRecorder) GetByID(ctx, id any) *gomock.Call {
 }
 
 // SignIn mocks base method.
-func (m *MockUserService) SignIn(ctx context.Context, user entity.User) (string, entity.Error) {
+func (m *MockUserService) SignIn(ctx context.Context, user entity.User) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", ctx, user)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -151,11 +151,11 @@ func (m *MockBankService) EXPECT() *MockBankServiceMockRecorder {
 }
 
 // CreateBank mocks base method.
-func (m *MockBankService) CreateBank(ctx context.Context, bank entity.Bank) (entity.Bank, entity.Error) {
+func (m *MockBankService) CreateBank(ctx context.Context, bank entity.Bank) (entity.Bank, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateBank", ctx, bank)
 	ret0, _ := ret[0].(entity.Bank)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -166,11 +166,11 @@ func (mr *MockBankServiceMockRecorder) CreateBank(ctx, bank any) *gomock.Call {
 }
 
 // GetBankListByUserID mocks base method.
-func (m *MockBankService) GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, entity.Error) {
+func (m *MockBankService) GetBankListByUserID(ctx context.Context, userID uint) ([]entity.Bank, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBankListByUserID", ctx, userID)
 	ret0, _ := ret[0].([]entity.Bank)
-	ret1, _ := ret[1].(entity.Error)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -181,10 +181,10 @@ func (mr *MockBankServiceMockRecorder) GetBankListByUserID(ctx, userID any) *gom
 }
 
 // LinkBank mocks base method.
-func (m *MockBankService) LinkBank(ctx context.Context, userID uint, bankCode string) entity.Error {
+func (m *MockBankService) LinkBank(ctx context.Context, userID uint, bankCode string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LinkBank", ctx, userID, bankCode)
-	ret0, _ := ret[0].(entity.Error)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
