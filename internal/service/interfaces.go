@@ -5,6 +5,8 @@ import (
 	"demo/bank-linking-listener/internal/service/entity"
 )
 
+//go:generate mockgen -destination=../mocks/mock_service_$GOFILE -source=$GOFILE -package=mocks
+
 type UserService interface {
 	SignIn(ctx context.Context, user entity.User) (string, entity.Error)
 	GetByID(ctx context.Context, id uint) (entity.User, entity.Error)

@@ -1,5 +1,7 @@
-run:
-	go run ./cmd/app
+.PHONY: run-% lint test
+
+run-%:
+	go run ./cmd/$*
 
 lint:
 	golangci-lint run ./...

@@ -2,7 +2,7 @@ package service_test
 
 import (
 	"context"
-	mock_repository "demo/bank-linking-listener/internal/repository/mock"
+	"demo/bank-linking-listener/internal/mocks"
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/utils"
@@ -17,7 +17,7 @@ func TestSignUp(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	mockUserRepo := mocks.NewMockUserRepository(ctrl)
 	userService := service.NewUserService(mockUserRepo)
 
 	t.Run("success", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestSignIn(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
+	mockUserRepo := mocks.NewMockUserRepository(ctrl)
 	userService := service.NewUserService(mockUserRepo)
 
 	t.Run("success", func(t *testing.T) {
