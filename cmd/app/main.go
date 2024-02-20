@@ -1,78 +1,32 @@
 package main
 
 import (
-	"context"
 	"demo/bank-linking-listener/config"
-	"demo/bank-linking-listener/internal/delivery/consumer"
-	httpHandler "demo/bank-linking-listener/internal/delivery/http"
-	"demo/bank-linking-listener/internal/infrastructure/tidb"
-	"demo/bank-linking-listener/internal/repository/tidb_repo"
-	"demo/bank-linking-listener/internal/service"
-	"demo/bank-linking-listener/internal/service/entity"
-	"demo/bank-linking-listener/pkg/kafka"
-	"fmt"
-	"log"
-	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
+	"demo/bank-linking-listener/internal"
+	"demo/bank-linking-listener/pkg/thread"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
 	config.LoadEnv("./.env")
-	cfg := config.LoadConfig("./config.yml")
-	fmt.Println(cfg)
 
-	db := tidb.NewTiDB(cfg)
+	httpServer := internal.InitializeHTTPServer("./config.yml")
+	consumerJob := internal.InitializeConsumerJob("./config.yml")
 
-	// setup repository
-	userRepository := tidb_repo.NewUserRepository(db)
-	bankRepository := tidb_repo.NewBankRepository(db)
+	rg := thread.NewRoutineGroup()
 
-	// setup service
-	userService := service.NewUserService(userRepository)
-	bankService := service.NewBankService(bankRepository)
+	rg.Run(httpServer.Run)
+	rg.Run(consumerJob.Run)
 
-	// setup controller
-	httpController := httpHandler.NewController(cfg, userService, bankService)
-	consumerController := consumer.NewController(cfg, bankService)
+	<-sigchan
 
-	// setup kafka consumer
-	kafkaClient := kafka.NewClient(cfg)
-	consumerController.Routes()
+	rg.Run(httpServer.Shutdown)
+	rg.Run(consumerJob.Shutdown)
 
-	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, consumerController)
-	if err != nil {
-		log.Fatalf("Failed to create consumer: %s", err)
-	}
-	go consumer.Start()
-	defer consumer.Stop()
-
-	// init admin
-	admin := entity.User{
-		Email:    cfg.Server.Admin.Email,
-		Password: cfg.Server.Admin.Password,
-		Role:     entity.AdminRole,
-	}
-	if err := userService.CreateAdminAccount(context.Background(), admin); err != nil {
-		log.Fatalf("Failed to create admin account: %s", err)
-	}
-
-	// setup router
-	r := gin.Default()
-	httpController.Routes(r)
-
-	s := &http.Server{
-		Addr:           fmt.Sprintf("%v:%v", cfg.Server.Host, cfg.Server.Port),
-		Handler:        r,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-
-	log.Printf("Server running at %v:%v", cfg.Server.Host, cfg.Server.Port)
-	err = s.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	rg.Wait()
 }
