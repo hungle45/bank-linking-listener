@@ -2,7 +2,6 @@ package http
 
 import (
 	"demo/bank-linking-listener/internal/delivery/http/http_dto"
-	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/pkg/errorx"
 	"demo/bank-linking-listener/pkg/utils"
 	"net/http"
@@ -10,23 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserHandler struct {
-	userService service.UserService
-}
-
-func NewUserHandler(userService service.UserService) *UserHandler {
-	return &UserHandler{
-		userService: userService,
-	}
-}
-
-func (h *UserHandler) CheckHealth(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"status": "ok",
-	})
-}
-
-func (h *UserHandler) CreateUserAccount(c *gin.Context) {
+func (controller *Controller) CreateUserAccount(c *gin.Context) {
 	var req http_dto.UserSignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, utils.ResponseWithMessage(
@@ -34,7 +17,7 @@ func (h *UserHandler) CreateUserAccount(c *gin.Context) {
 		return
 	}
 
-	if err := h.userService.CreateUserAccount(c.Request.Context(), *req.ToEntity()); err != nil {
+	if err := controller.userService.CreateUserAccount(c.Request.Context(), *req.ToEntity()); err != nil {
 		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, err.Error()))
 		return
@@ -44,7 +27,7 @@ func (h *UserHandler) CreateUserAccount(c *gin.Context) {
 		utils.ResponseStatusSuccess, "account has been created"))
 }
 
-func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
+func (controller *Controller) CreateCustomerAccount(c *gin.Context) {
 	var req http_dto.UserSignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, utils.ResponseWithMessage(
@@ -52,7 +35,7 @@ func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
 		return
 	}
 
-	if err := h.userService.CreateCustomerAccount(c.Request.Context(), *req.ToEntity()); err != nil {
+	if err := controller.userService.CreateCustomerAccount(c.Request.Context(), *req.ToEntity()); err != nil {
 		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, err.Error()))
 		return
@@ -62,7 +45,7 @@ func (h *UserHandler) CreateCustomerAccount(c *gin.Context) {
 		utils.ResponseStatusSuccess, "account has been created"))
 }
 
-func (h *UserHandler) SignIn(c *gin.Context) {
+func (controller *Controller) SignIn(c *gin.Context) {
 	var req http_dto.UserSignInRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, utils.ResponseWithMessage(
@@ -70,7 +53,7 @@ func (h *UserHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.userService.SignIn(c.Request.Context(), *req.ToEntity())
+	token, err := controller.userService.SignIn(c.Request.Context(), *req.ToEntity())
 	if err != nil {
 		c.JSON(errorx.GetHTTPCode(err), utils.ResponseWithMessage(
 			utils.ResponseStatusFail, err.Error()))

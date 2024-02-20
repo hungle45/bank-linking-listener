@@ -5,8 +5,6 @@ import (
 	"demo/bank-linking-listener/config"
 	"demo/bank-linking-listener/internal/delivery/consumer"
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
-	"demo/bank-linking-listener/internal/delivery/http/middleware"
-	"demo/bank-linking-listener/internal/delivery/http/route"
 	"demo/bank-linking-listener/internal/repository/tidb_repo"
 	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service"
@@ -46,22 +44,17 @@ func main() {
 	userService := service.NewUserService(userRepository)
 	bankService := service.NewBankService(bankRepository)
 
-	// setup handler
-	userHandler := httpHandler.NewUserHandler(userService)
-	bankHandler := httpHandler.NewBankHandler(bankService)
-
-	// setup middleware
-	authMiddleware := middleware.JWTMiddleware()
-	roleMiddleware := middleware.RoleMiddleware(userService)
+	// setup controller
+	controller := httpHandler.NewController(&cfg, userService, bankService)
 
 	// setup kafka consumer
 	kafkaClient := kafka.NewClient(cfg.Kafka.Brokers)
-	
+
 	bankLinkingConsumer := consumer.NewBankLinkingConsumer(bankService)
-	bankLinkingConsumer.TopicHandlers = map[string]kafka.ConsumerHandlerFn {
+	bankLinkingConsumer.TopicHandlers = map[string]kafka.ConsumerHandlerFn{
 		"bank-linking-log": bankLinkingConsumer.HandleBankLinking,
 	}
-	
+
 	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, bankLinkingConsumer)
 	if err != nil {
 		log.Fatalf("Failed to create consumer: %s", err)
@@ -81,16 +74,7 @@ func main() {
 
 	// setup router
 	r := gin.Default()
-
-	v1 := r.Group("/v1")
-	routerConfig := route.RouterConfig{
-		Router:         v1,
-		UserHandler:    userHandler,
-		BankHandler:    bankHandler,
-		JWTMiddleware:  authMiddleware,
-		RoleMiddleware: roleMiddleware,
-	}
-	routerConfig.Setup()
+	controller.Routes(r)
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf("%v:%v", cfg.Server.Host, cfg.Server.Port),
