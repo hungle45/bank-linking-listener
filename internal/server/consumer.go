@@ -14,11 +14,12 @@ type consumerJob struct {
 
 func NewConsumerJob(cfg *config.Config, controller *consumer.Controller) Server {
 	// setup kafka consumer
-	kafkaClient := kafka.NewClient(cfg)
+	BanklinkingLogConfig := cfg.Kafka[config.BankLinkingLog]
+	kafkaClient := kafka.NewClient(BanklinkingLogConfig)
 
 	controller.Routes()
 
-	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, controller)
+	consumer, err := kafka.NewConsumer(kafkaClient, BanklinkingLogConfig.Group, []string{BanklinkingLogConfig.Topic}, controller)
 	if err != nil {
 		log.Fatalf("Failed to create consumer: %s", err)
 	}

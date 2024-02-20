@@ -12,5 +12,8 @@ database:
   timezone: Asia/Ho_Chi_Minh
   dbname: dev
 kafka:
-  brokers:
-    - localhost:9092
+  bank_linking_log:
+    topic: bank-linking-log
+    group: bank-linking-group
+    brokers:
+      - localhost:9092

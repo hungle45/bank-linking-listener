@@ -15,8 +15,8 @@ func main() {
 
 	config.LoadEnv("./.env")
 
-	httpServer := internal.InitializeHTTPServer("./config.yml")
-	consumerJob := internal.InitializeConsumerJob("./config.yml")
+	httpServer := internal.InitializeHTTPServer("./config/app.yml")
+	consumerJob := internal.InitializeConsumerJob("./config/app.yml")
 
 	rg := thread.NewRoutineGroup()
 

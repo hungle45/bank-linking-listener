@@ -21,6 +21,6 @@ func NewController(cfg *config.Config, bankService service.BankService) *Control
 
 func (controller *Controller) Routes() {
 	controller.TopicHandlers = map[string]kafka.ConsumerHandlerFn{
-		"bank-linking-log": controller.HandleBankLinking,
+		controller.cfg.Kafka[config.BankLinkingLog].Topic: controller.HandleBankLinking,
 	}
 }

@@ -66,8 +66,9 @@ func main() {
 	cfg := config.LoadConfig("./config.yml")
 	fmt.Println(cfg)
 
-	kafkaClient := kafka.NewClient(cfg)
-	producer, err := kafka.NewProducer(kafkaClient, []string{"bank-linking-log"})
+	bankLinkingLogConfig := cfg.Kafka[config.BankLinkingLog]
+	kafkaClient := kafka.NewClient(bankLinkingLogConfig)
+	producer, err := kafka.NewProducer(kafkaClient, []string{bankLinkingLogConfig.Topic})
 	if err != nil {
 		log.Fatal("Failed to create kafka producer: ", err)
 	}

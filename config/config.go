@@ -9,9 +9,9 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig   `yml:"server"`
-	Database DatabaseConfig `yml:"database"`
-	Kafka    KafkaConfig    `yml:"kafka"`
+	Server   ServerConfig                      `yml:"server"`
+	Database DatabaseConfig                    `yml:"database"`
+	Kafka    map[KafkaClusterName]*KafkaConfig `yml:"kafka"`
 }
 
 type ServerConfig struct {
@@ -36,7 +36,15 @@ type DatabaseConfig struct {
 
 type KafkaConfig struct {
 	Brokers []string `yml:"brokers"`
+	Topic   string   `yml:"topic"`
+	Group   string   `yml:"group"`
 }
+
+type KafkaClusterName string
+
+var (
+	BankLinkingLog KafkaClusterName = "bank_linking_log"
+)
 
 func LoadConfig(configFilePath string) *Config {
 	file, err := os.Open(configFilePath)
