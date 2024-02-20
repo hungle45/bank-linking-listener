@@ -1,0 +1,15 @@
+version: '1.0'
+name: monitoring
+services:
+  promotheus:
+    container_name: local-promotheus
+    image: prom/prometheus
+    ports:
+      - "6060:9090"
+    volumes:
+      # - ../config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    restart: always
+
+volumes:
+  prometheus_data:

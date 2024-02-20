@@ -6,6 +6,7 @@ import (
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
+	"demo/bank-linking-listener/pkg/metrics"
 	"fmt"
 	"log"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type HTTPServer struct {
@@ -33,7 +35,10 @@ func NewHTTPServer(cfg *config.Config, controller *httpHandler.Controller, userS
 
 	// setup router
 	r := gin.Default()
+	r.Use(metrics.PromotheusMiddleware())
 	controller.Routes(r)
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	server := &http.Server{
 		Addr:           fmt.Sprintf("%v:%v", cfg.Server.Host, cfg.Server.Port),

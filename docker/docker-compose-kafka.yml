@@ -9,6 +9,7 @@ services:
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
       - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: always
   kafka:
     container_name: local-kafka
     image: 'bitnami/kafka:latest'
@@ -25,6 +26,7 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+    restart: always
   kafka-ui:
     container_name: local-kafka-ui
     image: 'provectuslabs/kafka-ui:latest'
@@ -38,3 +40,4 @@ services:
       - KAFKA_BROKERCONNECT=kafka:9091
     depends_on:
       - kafka
+    restart: always

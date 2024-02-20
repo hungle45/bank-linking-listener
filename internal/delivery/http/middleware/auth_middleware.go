@@ -5,7 +5,6 @@ import (
 	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/errorx"
 	"demo/bank-linking-listener/pkg/utils"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -50,7 +49,7 @@ func RoleMiddleware(userService service.UserService) func(...entity.Role) gin.Ha
 					utils.ResponseWithMessage(utils.ResponseStatusFail, err.Error()))
 				return
 			}
-			fmt.Println(acceptedRole, user.Role)
+
 			for _, role := range acceptedRole {
 				if role == user.Role {
 					c.Next()
