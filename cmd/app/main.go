@@ -5,12 +5,11 @@ import (
 	"demo/bank-linking-listener/config"
 	"demo/bank-linking-listener/internal/delivery/consumer"
 	httpHandler "demo/bank-linking-listener/internal/delivery/http"
+	"demo/bank-linking-listener/internal/infrastructure/tidb"
 	"demo/bank-linking-listener/internal/repository/tidb_repo"
-	"demo/bank-linking-listener/internal/repository/tidb_repo/tidb_dto"
 	"demo/bank-linking-listener/internal/service"
 	"demo/bank-linking-listener/internal/service/entity"
 	"demo/bank-linking-listener/pkg/kafka"
-	"demo/bank-linking-listener/pkg/tidb"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,38 +23,25 @@ func main() {
 	cfg := config.LoadConfig("./config.yml")
 	fmt.Println(cfg)
 
-	db := tidb.NewDB(&cfg.Database)
-	conn := db.GetConn()
-
-	// migrate models
-	if err := conn.AutoMigrate(&tidb_dto.UserModel{}); err != nil {
-		log.Fatalf("Failed to migrate user model: %s", err)
-	}
-
-	if err := conn.AutoMigrate(&tidb_dto.BankModel{}); err != nil {
-		log.Fatalf("Failed to migrate bank model: %s", err)
-	}
+	db := tidb.NewTiDB(cfg)
 
 	// setup repository
-	userRepository := tidb_repo.NewUserRepository(conn)
-	bankRepository := tidb_repo.NewBankRepository(conn)
+	userRepository := tidb_repo.NewUserRepository(db)
+	bankRepository := tidb_repo.NewBankRepository(db)
 
 	// setup service
 	userService := service.NewUserService(userRepository)
 	bankService := service.NewBankService(bankRepository)
 
 	// setup controller
-	controller := httpHandler.NewController(&cfg, userService, bankService)
+	httpController := httpHandler.NewController(cfg, userService, bankService)
+	consumerController := consumer.NewController(cfg, bankService)
 
 	// setup kafka consumer
-	kafkaClient := kafka.NewClient(cfg.Kafka.Brokers)
+	kafkaClient := kafka.NewClient(cfg)
+	consumerController.Routes()
 
-	bankLinkingConsumer := consumer.NewBankLinkingConsumer(bankService)
-	bankLinkingConsumer.TopicHandlers = map[string]kafka.ConsumerHandlerFn{
-		"bank-linking-log": bankLinkingConsumer.HandleBankLinking,
-	}
-
-	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, bankLinkingConsumer)
+	consumer, err := kafka.NewConsumer(kafkaClient, "bank-linking-listener", []string{"bank-linking-log"}, consumerController)
 	if err != nil {
 		log.Fatalf("Failed to create consumer: %s", err)
 	}
@@ -74,7 +60,7 @@ func main() {
 
 	// setup router
 	r := gin.Default()
-	controller.Routes(r)
+	httpController.Routes(r)
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf("%v:%v", cfg.Server.Host, cfg.Server.Port),

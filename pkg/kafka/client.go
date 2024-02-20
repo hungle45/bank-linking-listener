@@ -1,8 +1,13 @@
 package kafka
 
-import "github.com/IBM/sarama"
+import (
+	"demo/bank-linking-listener/config"
 
-func NewClient(brokerAddrs []string) sarama.Client {
+	"github.com/IBM/sarama"
+)
+
+func NewClient(cfg *config.Config) sarama.Client {
+	brokerAddrs := cfg.Kafka.Brokers
 	config := DefaultConfig()
 	cli, err := sarama.NewClient(brokerAddrs, config)
 	if err != nil {

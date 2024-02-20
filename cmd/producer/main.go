@@ -63,10 +63,10 @@ func linkBankHandler(producer kafka.Producer) gin.HandlerFunc {
 
 func main() {
 	config.LoadEnv("./.env")
-	cfg := config.LoadConfig("./config.yml").Kafka
+	cfg := config.LoadConfig("./config.yml")
 	fmt.Println(cfg)
 
-	kafkaClient := kafka.NewClient(cfg.Brokers)
+	kafkaClient := kafka.NewClient(cfg)
 	producer, err := kafka.NewProducer(kafkaClient, []string{"bank-linking-log"})
 	if err != nil {
 		log.Fatal("Failed to create kafka producer: ", err)

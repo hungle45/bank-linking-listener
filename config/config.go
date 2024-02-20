@@ -38,7 +38,7 @@ type KafkaConfig struct {
 	Brokers []string `yml:"brokers"`
 }
 
-func LoadConfig(configFilePath string) Config {
+func LoadConfig(configFilePath string) *Config {
 	file, err := os.Open(configFilePath)
 	if err != nil {
 		log.Fatalf("Error opening config file: %s", err)
@@ -55,5 +55,5 @@ func LoadConfig(configFilePath string) Config {
 		log.Fatalf("Error unmarshaling config: %s", err)
 	}
 
-	return config
+	return &config
 }
